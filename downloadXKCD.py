@@ -6,17 +6,20 @@ Checks if comic already downloaded so for increased efficiency on rerun.
 
 Needs feature update where title text is in properties of downloaded image.
 
-Derived from https://automatetheboringstuff.com/chapter11/
+https://automatetheboringstuff.com/chapter11/
 """
+import time
 import os
 import requests
 import bs4
 
 
+start = time.time()
+
+
 def getPrevLink(soup, url):
     prevLink = soup.select('a[rel="prev"]')[0]
     return 'https://xkcd.com' + prevLink.get('href')
-
 
 
 url = 'https://xkcd.com'              # starting url
@@ -65,3 +68,11 @@ while not url.endswith('#'):
     url = getPrevLink(soup, url)
 
 print('Done.')
+
+timetotal = time.time() - start
+if timetotal > 60:
+    mins = timetotal//60
+    sec = timetotal-min*60
+    print(f"Runtime: {mins} minutes, {sec} seconds")
+else:
+    print(f"Runtime: {timetotal} seconds")
