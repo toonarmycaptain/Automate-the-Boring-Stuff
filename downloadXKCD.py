@@ -4,6 +4,10 @@
 Webscraper that downloads xkcd comics
 Checks if comic already downloaded so for increased efficiency on rerun.
 
+Two run modess: Full and Quick
+Full mode goes through every comic.
+Quick mode quits when it reaches the first comic that is already downloaded.
+
 Needs feature update where title text is in properties of downloaded image.
 
 https://automatetheboringstuff.com/chapter11/
@@ -13,6 +17,27 @@ import os
 import requests
 import bs4
 
+print('This script searches xkcd.com and downloads each comic.')
+
+# User input for full run or until finding already downloaded comic.
+print('There are two mode options:\n'
+      '\nQuick mode: Or "refresh mode", checked until it finds \n'
+      ' Full mode: Checks for every comic, downloads undownloaded comics.'
+      'a previously downloaded comic.\n')
+
+while True:
+    try:
+        print('Please select mode:\n'
+              'Enter 0 for Quick mode, or 1 for Full Mode')
+        run_mode_selection = input('Mode: ')
+        if int(run_mode_selection) == 0:
+            run_mode = False  # Quick mode
+            break
+        if int(run_mode_selection) == 1:
+            run_mode = True    # Full mode
+            break
+    except ValueError:
+        continue
 
 start = time.time()
 
@@ -53,9 +78,13 @@ while not url.endswith('#'):
             continue
         except FileExistsError:
             print('--- Comic already downloaded.---')
-            # skip this comic
-            url = getPrevLink(soup, url)
-            continue
+            if run_mode:   # Full mode
+                # skip this comic
+                url = getPrevLink(soup, url)
+                continue
+            if not run_mode:
+                print('Finished updating archive.')
+                break
         # TODO: Needs feature update where title text
         #       is in properties of downloaded image.
 
@@ -72,7 +101,7 @@ print('Done.')
 timetotal = time.time() - start
 if timetotal > 60:
     mins = timetotal//60
-    sec = timetotal-min*60
-    print(f"Runtime: {mins} minutes, {sec} seconds")
+    sec = timetotal-mins*60
+    print(f"Runtime: {mins:.0f} minutes, {sec:.2f} seconds")
 else:
-    print(f"Runtime: {timetotal} seconds")
+    print(f"Runtime: {timetotal:.2f} seconds")
