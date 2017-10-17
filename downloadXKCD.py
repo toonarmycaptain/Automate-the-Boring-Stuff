@@ -21,9 +21,10 @@ print('This script searches xkcd.com and downloads each comic.')
 
 # User input for full run or until finding already downloaded comic.
 print('There are two mode options:\n'
-      '\nQuick mode: Or "refresh mode", checked until it finds \n'
-      ' Full mode: Checks for every comic, downloads undownloaded comics.'
-      'a previously downloaded comic.\n')
+      '\nQuick mode: Or "refresh mode", checked until it finds '
+      'a previously downloaded comic.\n'
+      ' Full mode: Checks for every comic, downloads undownloaded comics.\n'
+      )
 
 while True:
     try:
@@ -52,7 +53,7 @@ os.makedirs('xkcd', exist_ok=True)   # store comics in ./xkcd
 
 while not url.endswith('#'):
     # Download the page.
-    print('Downloading page {}...'.format(url))
+    print(f'Downloading page {url}...')
     res = requests.get(url)
     res.raise_for_status()
 
@@ -66,12 +67,13 @@ while not url.endswith('#'):
         try:
             comicUrl = 'https:' + comicElem[0].get('src')
             # Download the image.
-            print('Downloading image {}...'.format(comicUrl))
+            print(f'Downloading image {comicUrl}...')
             res = requests.get(comicUrl)
             res.raise_for_status()
             # Check if comic previously downloaded.
-            imageFile = open(os.path.join('xkcd',
-                                          os.path.basename(comicUrl)), 'xb')
+            imageFile = open(os.path.join(
+                    'xkcd',
+                    (f'{urlNumber} - {os.path.basename(comicUrl)}')), 'xb')
         except requests.exceptions.MissingSchema:
             # skip this comic
             url = getPrevLink(soup, url)
@@ -105,3 +107,8 @@ if timetotal > 60:
     print(f"Runtime: {mins:.0f} minutes, {sec:.2f} seconds")
 else:
     print(f"Runtime: {timetotal:.2f} seconds")
+
+# if __name__ == "__main__":
+    # execute only if run as a script
+    # pass 0/1//True/False for run mode via main(mode)?
+#    main(mode)
